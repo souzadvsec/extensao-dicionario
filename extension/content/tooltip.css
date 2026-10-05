@@ -1,0 +1,239 @@
+/* Visual do tooltip. Carregado como <style> dentro do Shadow DOM (isolado da página). */
+:host {
+  --dicio-bg: #ffffff;
+  --dicio-fg: #1f2937;
+  --dicio-muted: #6b7280;
+  --dicio-border: #e5e7eb;
+  --dicio-accent: #2563eb;
+  --dicio-accent-soft: #eff6ff;
+  --dicio-danger: #b91c1c;
+  --dicio-shadow: 0 10px 30px rgba(15, 23, 42, 0.18), 0 2px 6px rgba(15, 23, 42, 0.08);
+}
+
+@media (prefers-color-scheme: dark) {
+  :host {
+    --dicio-bg: #1f2937;
+    --dicio-fg: #f3f4f6;
+    --dicio-muted: #9ca3af;
+    --dicio-border: #374151;
+    --dicio-accent: #93c5fd;
+    --dicio-accent-soft: #1e3a8a;
+    --dicio-danger: #fca5a5;
+    --dicio-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+  }
+}
+
+.panel {
+  box-sizing: border-box;
+  width: max-content;
+  min-width: 220px;
+  max-width: min(340px, calc(100vw - 16px));
+  overflow: hidden;
+  background: var(--dicio-bg);
+  color: var(--dicio-fg);
+  border: 1px solid var(--dicio-border);
+  border-radius: 12px;
+  box-shadow: var(--dicio-shadow);
+  font: 14px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  text-align: left;
+  animation: dicio-in 120ms ease-out;
+}
+
+@keyframes dicio-in {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel {
+    animation: none;
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 10px 8px 14px;
+  border-bottom: 1px solid var(--dicio-border);
+}
+
+.word {
+  font-size: 15px;
+  font-weight: 650;
+  overflow-wrap: anywhere;
+}
+
+.close {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--dicio-muted);
+  font: 20px/1 system-ui, sans-serif;
+  cursor: pointer;
+}
+
+.close:hover {
+  background: var(--dicio-accent-soft);
+  color: var(--dicio-fg);
+}
+
+.close:focus-visible,
+.suggestion:focus-visible,
+.source:focus-visible {
+  outline: 2px solid var(--dicio-accent);
+  outline-offset: 2px;
+}
+
+.body {
+  max-height: 260px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 10px 14px 12px;
+}
+
+.entry {
+  counter-reset: dicio-def;
+}
+
+.entry + .entry {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--dicio-border);
+}
+
+/* Acepções sem etiqueta continuam a lista; com etiqueta, abrem um novo grupo. */
+.sense + .sense {
+  margin-top: 3px;
+}
+
+.sense + .sense:has(> .tags) {
+  margin-top: 8px;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+.tag {
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--dicio-accent-soft);
+  color: var(--dicio-accent);
+  font-size: 11px;
+  font-weight: 600;
+  font-style: italic;
+}
+
+.defs {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.defs li {
+  position: relative;
+  padding-left: 22px;
+  counter-increment: dicio-def;
+}
+
+.defs li + li {
+  margin-top: 3px;
+}
+
+.defs li::before {
+  content: counter(dicio-def) ".";
+  position: absolute;
+  left: 0;
+  color: var(--dicio-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.etym {
+  margin: 8px 0 0;
+  color: var(--dicio-muted);
+  font-size: 12px;
+  font-style: italic;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+.status-error {
+  color: var(--dicio-danger);
+}
+
+.spinner {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--dicio-border);
+  border-top-color: var(--dicio-accent);
+  border-radius: 50%;
+  animation: dicio-spin 700ms linear infinite;
+}
+
+@keyframes dicio-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.hint {
+  margin: 10px 0 6px;
+  color: var(--dicio-muted);
+  font-size: 12px;
+}
+
+.suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.suggestion {
+  padding: 3px 10px;
+  border: 1px solid var(--dicio-border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--dicio-accent);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.suggestion:hover {
+  background: var(--dicio-accent-soft);
+}
+
+.footer {
+  padding: 6px 14px 8px;
+  border-top: 1px solid var(--dicio-border);
+  font-size: 11px;
+}
+
+.source {
+  color: var(--dicio-muted);
+  text-decoration: none;
+}
+
+.source:hover {
+  color: var(--dicio-accent);
+  text-decoration: underline;
+}

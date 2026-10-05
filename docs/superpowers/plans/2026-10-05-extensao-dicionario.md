@@ -1021,7 +1021,12 @@ Expected: PASS, 6 testes, 0 falhas.
   border-top: 1px dashed var(--dicio-border);
 }
 
+/* Acepções sem etiqueta continuam a lista; com etiqueta, abrem um novo grupo. */
 .sense + .sense {
+  margin-top: 3px;
+}
+
+.sense + .sense:has(> .tags) {
   margin-top: 8px;
 }
 
